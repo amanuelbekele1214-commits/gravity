@@ -201,10 +201,13 @@
       <line x1="${x0}" y1="${H - 15}" x2="${xe}" y2="${H - 15}" stroke="var(--muted)"/>
       ${ticks}
       <text x="${xe + 6}" y="${H - 2}" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">cm</text>
-      <path d="${fin(-1)}" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
-      <path d="${fin(1)}" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
-      <rect x="${xn}" y="${cy - r}" width="${xe - xn}" height="${2 * r}" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
-      <path d="${nose}" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/>
+      <path d="${fin(-1)}" fill="#141b23" stroke="var(--ink-2)" stroke-width="1.5"/>
+      <path d="${fin(1)}" fill="#141b23" stroke="var(--ink-2)" stroke-width="1.5"/>
+      <rect x="${xn}" y="${cy - r}" width="${xe - xn}" height="${2 * r}" fill="#1a222c" stroke="var(--ink-2)" stroke-width="1.5"/>
+      <path d="${nose}" fill="#1a222c" stroke="var(--ink-2)" stroke-width="1.5"/>
+      <defs><filter id="flameGlow" x="-50%" y="-80%" width="200%" height="260%"><feGaussianBlur stdDeviation="4"/></filter></defs>
+      <path d="M${xe},${cy - r * 0.55} L${xe + Math.min(r * 1.6, 34)},${cy} L${xe},${cy + r * 0.55} Z" fill="var(--accent)" filter="url(#flameGlow)"/>
+      <path d="M${xe},${cy - r * 0.35} L${xe + Math.min(r * 1.1, 24)},${cy} L${xe},${cy + r * 0.35} Z" fill="#ffd2a8"/>
       <rect x="${xe - 7 * s}" y="${cy - r + 3}" width="${7 * s}" height="${Math.max(2 * r - 6, 2)}" fill="var(--accent-soft)" stroke="var(--accent)" stroke-dasharray="3 2"/>
       ${sym(xcg, "cg")}${sym(xcp, "cp")}
       <line x1="${lo}" y1="${yDim}" x2="${hi}" y2="${yDim}" stroke="${st.margin >= 1 ? "var(--good)" : st.margin >= 0 ? "var(--warn)" : "var(--bad)"}" stroke-width="2"/>
@@ -276,9 +279,12 @@
       const zeroY = Y(Math.max(y0, Math.min(0, y1)));
       ctx.beginPath(); vis.forEach((p, k) => k ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1])));
       ctx.lineTo(X(vis[vis.length - 1][0]), zeroY); ctx.lineTo(X(vis[0][0]), zeroY); ctx.closePath();
-      ctx.fillStyle = css("--accent-soft"); ctx.fill();
+      const grad = ctx.createLinearGradient(0, m.t, 0, Hc - m.b);
+      grad.addColorStop(0, "rgba(255,106,31,0.35)"); grad.addColorStop(1, "rgba(255,106,31,0.02)");
+      ctx.fillStyle = grad; ctx.fill();
       ctx.beginPath(); vis.forEach((p, k) => k ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1])));
-      ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.stroke();
+      ctx.save(); ctx.shadowColor = css("--glow"); ctx.shadowBlur = 10;
+      ctx.strokeStyle = accent; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.stroke(); ctx.restore();
       // highlighted peak
       if (opts.peak) {
         const pk = vis.reduce((b, p) => (p[1] > b[1] ? p : b));
